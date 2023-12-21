@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Merriweather&family=Noto+Sans&family=Roboto+Slab:wght@500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*{
+    overflow-x: hidden;
+    
+font-family: 'Roboto Slab', serif;
+}
+
+@layer base{
+    .link{
+        @apply hover:text-white hover:bg-gray-800 p-3 rounded-md text-gray-500 duration-300 transition-all ease-in-out;
+    }
+}
