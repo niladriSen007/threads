@@ -8,6 +8,7 @@ import SearchPage from "./pages/SearchPage";
 import ActivityPage from "./pages/ActivityPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatePost from "./pages/CreatePost";
+import SingleThread from "./pages/SingleThread";
 
 function App() {
   const LoginUserLayout = () => {
@@ -55,6 +56,10 @@ function App() {
         {
           path: "/profile",
           element: <ProfilePage />,
+        },
+        {
+          path: "/post/:postId",
+          element: <SingleThread />,
         },
       ],
     },
