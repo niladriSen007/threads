@@ -9,6 +9,7 @@ import { connectDB } from "./database/connection.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import cors from 'cors';
 
 const app = express();
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // This line of code is using the cookie-parser middleware. This middleware is used to parse Cookie header and populate req.cookies with an object keyed by the cookie names. This allows you to work with cookies sent back from the client.
 
 app.use(cookieParser());
+app.use(cors())
 
 
 //routes
