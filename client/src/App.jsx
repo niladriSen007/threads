@@ -9,6 +9,8 @@ import ActivityPage from "./pages/ActivityPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatePost from "./pages/CreatePost";
 import SingleThread from "./pages/SingleThread";
+import SignupPage from "./pages/auth/SingnupPage";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
   const LoginUserLayout = () => {
@@ -26,7 +28,7 @@ function App() {
   const BeforeLoginUserLayout = () => {
     return (
       <div className="w-screen h-screen bg-slate-950 text-white">
-        <h1>Before Login Layout</h1>
+        {/* <h1>Before Login Layout</h1> */}
         <Outlet />
       </div>
     );
@@ -68,12 +70,12 @@ function App() {
       element: <BeforeLoginUserLayout />,
       children: [
         {
-          path: "/login",
-          element: <h1>Login</h1>,
+          path: "/signin",
+          element: <LoginPage />,
         },
         {
           path: "/signup",
-          element: <h1>Signup</h1>,
+          element: <SignupPage />,
         },
       ],
     },
