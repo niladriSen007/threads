@@ -38,8 +38,8 @@ const SingleThread = () => {
   }, [showPopup]);
 
   return (
-    <div className=" mx-auto  max-w-xl">
-      <div className="flex items-center gap-3  relative">
+    <div className=" mx-auto  max-w-xl relative">
+      <div className="flex items-center gap-3  ">
         <div>
           <img
             src="https://randomuser.me/api/portraits/men/9.jpg"
@@ -57,7 +57,7 @@ const SingleThread = () => {
             <span>6m</span>
             <BsThreeDots
               onClick={() => setShowPopup(!showPopup)}
-              className="cursor-pointer relative z-50"
+              className="cursor-pointer  z-50"
             />
 
             {showPopup && (
@@ -65,7 +65,7 @@ const SingleThread = () => {
                 ref={popref}
                 className="absolute top-10 right-2 bg-gray-800 rounded-lg  text-white text-xs"
               >
-                <div className="flex flex-col items-start justify-start gap-2  text-lg w-40 h-48">
+                <div className="flex flex-col items-start justify-start gap-2  text-sm w-40 ">
                   <button className="border-b border-gray-600 py-2 w-full">
                     Edit post
                   </button>
