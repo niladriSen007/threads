@@ -1,34 +1,45 @@
 import { lazy } from "react";
+import { useThreadContext } from "../../store/ThreadContext";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 
 const Thread = lazy(() => import("../Thread/Thread"));
 
-const Threads = () => {
+const Threads = ({threads}) => {
 
-  // const threadId = 1;
-  const threadData = {
-    threadId:1,
-    content: "This is a thread",
-    imageUrl: "https://picsum.photos/200/300",
-    likes: 10,
-    replies: 5,
-  };
+  const {currentUser} = useThreadContext();
+  console.log(currentUser)
 
+  // const {name, username, profileimg,followers} = currentUser;
 
-  const threadData2 = {
-    threadId:2,
-    content: "This is a thread 2",
-    // imageUrl: "https://picsum.photos/200/300",
-    likes: 10,
-    replies: 5,
-  };
+  const getUsersAllPost = async () => {
+    try {
+    const res = await axios.get(`/api/posts/getAllPosts/${currentUser?._id}`);
+      console.log(res.data);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const {data} = useQuery("posts", getUsersAllPost);
+
+  console.log(data)
 
 
 
   return (
     <>
-      <Thread {...{threadData}}/>
-      <Thread {...{threadData: threadData2}}/>
+    {
+      data?.length > 0 ?
+      data?.map((thread) => (
+        <div key={thread?._id}>
+
+        <Thread threadData = {thread}/>
+        </div>
+      )) : <div className="text-center text-white">Please make some posts to show.</div>
+    }
     </>
   );
 };

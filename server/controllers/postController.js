@@ -139,3 +139,21 @@ export const addComment = async (req, res) => {
         res.status(500).json({error:error.message});
     }
 }
+
+
+export const getOwnAllPosts = async (req, res) => {
+    const userId = req.params.id;
+    // console.log(userId)
+    const strUId = userId.toString();
+    try {
+        const posts = await Post.find({postedBy:strUId}).sort({createdAt:-1})
+
+        if(!posts){
+            return res.status(200).json({error:"You have not yet posted anything"})
+        }
+
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({error:error.message});
+    }
+}

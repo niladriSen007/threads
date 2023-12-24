@@ -1,15 +1,19 @@
 import { FaInstagram } from "react-icons/fa";
 import { profileTab } from "../constants/utils/profileTab";
 import { Suspense, useState } from "react";
-import { profileContent } from "../constants/utils/profileContent";
+// import { profileContent } from "../constants/utils/profileContent";
 import { useThreadContext } from "../store/ThreadContext";
+import Threads from "../components/Threads/Threads";
+import Followers from "../components/Followers/Followers";
+import Following from "../components/Following/Following";
+
 const ProfilePage = () => {
   const [selectedTab, setSelectedTab] = useState(1);
 
   const {currentUser} = useThreadContext();
   console.log(currentUser)
 
-  // const {name, username, profileimg,followers} = currentUser;
+
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
       <section>
@@ -41,7 +45,7 @@ const ProfilePage = () => {
         </div>
 
         {/* // Profile Tab */}
-        <div className="flex items-center justify-between gap-5 mx-auto max-w-xl my-16 border-b px-16  border-gray-600">
+        <div className="flex items-center justify-between gap-5 mx-auto max-w-xl mt-16 mb-10 border-b px-16  border-gray-600">
           {profileTab?.map((tab) => (
             <div
               className={`flex items-center justify-center cursor-pointer pb-1 w-20 ${
@@ -57,7 +61,7 @@ const ProfilePage = () => {
 
         {/* // Profile Tab Content */}
         <div className="flex items-center justify-between mx-auto  max-w-xl">
-          {profileContent?.map((content) => (
+          {/* {profileContent?.map((content) => (
             <div
               className={`${
                 selectedTab === content?.id ? "block" : "hidden"
@@ -66,7 +70,16 @@ const ProfilePage = () => {
             >
               {content.element}
             </div>
-          ))}
+          ))} */}
+          { selectedTab === 1 && <div className="w-full">
+              <Threads />
+          </div>}
+          { selectedTab === 2 && <div className="w-full">
+              <Followers />
+          </div>}
+          { selectedTab === 3 && <div className="w-full">
+              <Following />
+          </div>}
         </div>
       </section>
     </Suspense>
