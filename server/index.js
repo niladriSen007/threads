@@ -9,6 +9,7 @@ import { connectDB } from "./database/connection.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
 import cors from 'cors';
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(cors())
 //routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
 
 
 app.get("/", (req, res) => {

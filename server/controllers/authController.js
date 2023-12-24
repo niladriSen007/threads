@@ -76,10 +76,21 @@ export const LoginUser = async (req, res) => {
       //   handleError("Invalid credentials", 500);
     }
 
-    const token = await generateJWTToken(user._id, res);
+    const token = generateJWTToken(user._id, res);
+    // console.log(token)
 
     res.status(200).json(user);
   } catch (error) {
     handleError(error.message, 500);
   }
 };
+
+
+export const LogoutUser = async (req, res) => {
+  try {
+    res.cookie("token", "", { maxAge: 1 });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    handleError(error.message, 500);
+  }
+}
