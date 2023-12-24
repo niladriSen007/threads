@@ -59,7 +59,7 @@ const SignupPage = () => {
       // Invalidate and refetch
       console.log(data);
       queryClient.invalidateQueries("data");
-      redirect("/login");
+      redirect("/signin");
     },
   });
 

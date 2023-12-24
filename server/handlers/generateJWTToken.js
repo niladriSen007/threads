@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
-export const generateJWTToken = async (userId,res) => {
-    const token = await jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+export const generateJWTToken =  (userId,res) => {
+    const token =  jwt.sign({ id: userId }, process.env.JWT_SECRET, {
         expiresIn: "30d", // token will expire in 30 days
     });
+
+    console.log(token,"Token")
 
     res.cookie("token", token, {
         httpOnly: true, // client side js cannot access the cookie
