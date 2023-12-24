@@ -1,7 +1,7 @@
-const RecommendedProfile = ({name,username,profilePic}) => {
+const RecommendedProfile = ({name,username,profilePic,followers}) => {
   return (
     <div className="flex items-center justify-between border-b border-gray-600 pb-4 my-6">
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-3">
         <div>
           <img
             src={profilePic || "https://smsdelhibmw.co.in/wp-content/uploads/2022/02/User-Profile-PNG.png"}
@@ -14,7 +14,7 @@ const RecommendedProfile = ({name,username,profilePic}) => {
             <p className="font-bold  ">{username}</p>
             <p className="font-thin text-gray-600 -mt-1">{name}</p>
           </div>
-          <span className="font-base">2.2M followers</span>
+          <span className="font-base">{followers?.length} { followers?.length > 1 ? 'followers' : 'follower'}</span>
         </div>
       </div>
       <div>

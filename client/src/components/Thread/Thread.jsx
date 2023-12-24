@@ -13,9 +13,11 @@ import Actions from "../shared/Actions";
 const Thread = ({ threadData }) => {
   const [showPopup, setShowPopup] = useState(false);
 
-  const {threadId,content,imageUrl,likes,replies} = threadData;
+  // const {threadId,content,imageUrl,likes,replies} = threadData;
 
   const popref = useRef(null);
+
+  console.log(threadData)
 
   //generater a code by using which i can implement the functionality that when i click any other place the popup will be closed
   useEffect(() => {
@@ -80,9 +82,9 @@ const Thread = ({ threadData }) => {
               )}
             </div>
           </div>
-          <Link to={`/post/${threadId}`}>
-          <span className="text-sm font-thin">{content}</span> 
-          { imageUrl && <div className="rounded-lg pt-2">
+          <Link to={`/post/${threadData?._id}`}>
+          <span className="text-sm font-thin">{threadData?.postText}</span> 
+          { threadData?.photo && <div className="rounded-lg pt-2">
             <img
               src="https://picsum.photos/200/300"
               alt="post"
@@ -115,9 +117,9 @@ const Thread = ({ threadData }) => {
           />
         </div>
         <div className="flex gap-1 text-sm font-thin text-gray-600">
-          <span>{likes} likes</span>
+          <span>{threadData?.likes?.length} likes</span>
           <span>.</span>
-          <span>{replies} replies</span>
+          <span>{threadData?.replies?.length} replies</span>
         </div>
       </div>
       <hr className=" my-6  ml-16 " />

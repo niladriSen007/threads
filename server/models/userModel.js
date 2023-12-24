@@ -28,7 +28,6 @@ const UserSchema = new Schema({
     },
     profileimg:{
         type:String,
-        default:0
     },
     followers: {
         type: [String],

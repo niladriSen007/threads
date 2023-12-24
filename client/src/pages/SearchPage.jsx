@@ -35,7 +35,8 @@ const SearchPage = () => {
             <RecommendedProfile
               name={user.name}
               username={user.username}
-              profilePic={user.profilePic}
+              profilePic={user.profileimg}
+              followers={user.followers}
             />
           </div>
         ))}

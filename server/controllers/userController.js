@@ -18,6 +18,25 @@ export const getUserByName = async (req, res) => {
   }
 };
 
+
+export const getUserById = async (req, res) => {
+  // console.log("Id"+req.params?.id)
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      console.log("Inside")
+      return res.status(404).json("user not exists");
+    }
+
+    const { password, confirmpassword, updatedAt, ...other } = user?._doc;
+
+    res.status(200).json(other);
+  } catch (error) {
+    handleError(error.message, 500);
+  }
+}
+
 export const getOwnDetails = async (req, res) => {
   try {
     const user = await User.findById(req?.user?._id);

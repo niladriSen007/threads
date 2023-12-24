@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const redirect = useNavigate();
@@ -66,7 +67,7 @@ const LoginPage = () => {
         alt=""
       />
 
-      <div className="flex flex-col justify-center items-center gap-8 -mt-16">
+      <div className="flex flex-col justify-center items-center gap-8 -mt-32">
         {fetchStatus === "loading" && <div>Loading...</div>}
         {fetchStatus === "error" && <div>Error fetching data</div>}
         {fetchStatus === "success" && (
@@ -84,7 +85,8 @@ const LoginPage = () => {
             type="email"
             onChange={formik.handleChange}
             value={formik.values.email}
-            className="p-4 rounded-md text-black bg-gray-800 focus:outline-none"
+            // autoComplete="off"
+            className="p-4 rounded-md text-white bg-gray-800 focus:mx-1"
             placeholder="Enter your email "
           />
           {formik.errors.email ? (
@@ -98,7 +100,7 @@ const LoginPage = () => {
             type="password"
             onChange={formik.handleChange}
             value={formik.values.password}
-            className="p-4 rounded-md text-black bg-gray-800 focus:outline-none"
+            className="p-4 rounded-md text-white bg-gray-800 focus:mx-1"
             placeholder="Enter your password "
           />
 
@@ -115,6 +117,7 @@ const LoginPage = () => {
          <img src="https://img.freepik.com/premium-vector/instagram-app-icon-social-media-logo-vector-illustration_277909-403.jpg" alt="" className="w-12 h-12 rounded-lg object-cover" />
           <span>Continue with Instagram</span>
         </div>
+        <Link to={"/signup"} className="w-96 text-center p-2 rounded-md border border-gray-600 ">Register as a new user ?</Link>
       </div>
     </div>
   );
