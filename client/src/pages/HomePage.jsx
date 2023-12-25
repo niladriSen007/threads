@@ -3,16 +3,19 @@
 
 import axios from "axios"
 import { useQuery } from "react-query"
-import { useThreadContext } from "../store/ThreadContext"
+import Thread from "../components/Thread/Thread"
 
 
 const HomePage = () => {
 
-  const { setCurrentUser } = useThreadContext();
 
-  const getCurrentUser = async () => {
+  
+
+
+
+  const getPosts = async () => {
     try {
-      const res = await axios.get("/api/users/profile")
+      const res = await axios.get("/api/posts/getAll")
       console.log(res)
       return res.data
     } catch (err) {
@@ -20,25 +23,29 @@ const HomePage = () => {
     }
   }
 
-   const { status, data } = useQuery("currentUser", getCurrentUser)
-  //  console.log(data)
-   setCurrentUser(data)
 
-  // useEffect(() => {
-  //   welcome()
-  // }, [])
+   const { status:fetchPostStatus, data  } = useQuery("getPosts", getPosts)
+  // console.log(data)
 
-  // const welcome = () => {
-  //   toast.success("Welcome to the HomePage")
-  // }
+
+
 
   return (
     <div>
-      {status === "loading" && <div>Loading...</div>}
-      {status === "error" && <div>Error fetching data</div>}
-      
-        <h1>Home Page</h1>
+      {/* {status === "loading" && <div>Loading...</div>}
+      {status === "error" && <div>Error fetching data</div>} */}
+      {fetchPostStatus === "loading" && <div>Loading...</div>}
+      {fetchPostStatus === "error" && <div>Error fetching data</div>}
+      {fetchPostStatus === "success" && (
+        <div className="mx-auto max-w-5xl mt-6">
+          {data?.map((post) => (
+            <div key={post?._id} className="flex items-center justify-between gap-5  py-5 w-full ">
+              <Thread threadData={post} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  )
-}
+  )}
+
 export default HomePage

@@ -23,7 +23,7 @@ const ProfilePage = () => {
             <h1 className="text-3xl overflow-hidden font-black ">{currentUser?.name}</h1>
             <p className="text-sm text-gray-400 font-semibold">{currentUser?.username}</p>
             <span className="text-sm text-gray-400 font-base mt-3">
-              {currentUser?.followers?.length} followers
+              {currentUser?.followers?.length} {currentUser?.followers?.length > 1 ? "followers" : "follower"}
             </span>
           </div>
           <div className="flex flex-col gap-5 justify-end items-end">
