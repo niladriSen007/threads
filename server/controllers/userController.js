@@ -96,6 +96,7 @@ export const followUnfollowUser = async (req, res) => {
     console.log(id);
     const userToBeFollowed = await User.findById(id);
     const currentUser = await User.findById(req?.user?._id);
+    let user1,user2;
 
     if (!userToBeFollowed) {
       return res.status(404).json("user not exists");
@@ -106,29 +107,29 @@ export const followUnfollowUser = async (req, res) => {
     }
 
     if (!userToBeFollowed?.followers?.includes(currentUser?._id)) {
-      await User.findByIdAndUpdate(
+      user1 = await User.findByIdAndUpdate(
         id,
         { $push: { followers: currentUser?._id } },
         { new: true }
       );
-      await User.findByIdAndUpdate(
+      user2 = await User.findByIdAndUpdate(
         currentUser?._id,
         { $push: { following: id } },
         { new: true }
       );
-      return res.status(200).json("user has been followed");
+      return res.status(200).json(user2);
     } else {
-      await User.findByIdAndUpdate(
+      user1 = await User.findByIdAndUpdate(
         id,
         { $pull: { followers: currentUser?._id } },
         { new: true }
       );
-      await User.findByIdAndUpdate(
+      user2 =  await User.findByIdAndUpdate(
         currentUser?._id,
         { $pull: { following: id } },
         { new: true }
       );
-      return res.status(200).json("user has been unfollowed");
+      return res.status(200).json(user2);
     }
     return res.status(200).json("user not exists");
   } catch (error) {

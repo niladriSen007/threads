@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { useThreadContext } from "../../store/ThreadContext";
 
 const LoginPage = () => {
   const redirect = useNavigate();
@@ -13,6 +14,8 @@ const LoginPage = () => {
   const [responsedata, setResponseData] = useState();
   // eslint-disable-next-line no-unused-vars
   const [fetchStatus, setFetchStatus] = useState();
+
+  const {setCurrentUser} = useThreadContext()
 
   const validate = (values) => {
     const errors = {};
@@ -44,6 +47,7 @@ const LoginPage = () => {
     onSuccess: (data) => {
       // Invalidate and refetch
       console.log(data);
+      setCurrentUser(data)
       queryClient.invalidateQueries("data");
       redirect("/");
     },

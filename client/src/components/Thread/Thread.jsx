@@ -3,6 +3,7 @@ import { BsThreeDots } from "react-icons/bs";
 
 import { Link } from "react-router-dom";
 import Actions from "../shared/Actions";
+import { useThreadContext } from "../../store/ThreadContext";
 /**
  * Represents a Thread component.
  *
@@ -14,10 +15,11 @@ const Thread = ({ threadData }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   // const {threadId,content,imageUrl,likes,replies} = threadData;
+  const {currentUser} = useThreadContext()
 
   const popref = useRef(null);
 
-  console.log(threadData)
+  console.log(threadData);
 
   //generater a code by using which i can implement the functionality that when i click any other place the popup will be closed
   useEffect(() => {
@@ -45,8 +47,8 @@ const Thread = ({ threadData }) => {
   }, [showPopup]);
 
   return (
-    <div >
-      <div className="flex items-start gap-3 justify-between relative">
+    <div className="w-full relative">
+      <div className="flex items-start gap-3 justify-between  h-40">
         <div>
           <img
             src="https://randomuser.me/api/portraits/men/9.jpg"
@@ -71,27 +73,46 @@ const Thread = ({ threadData }) => {
               {showPopup && (
                 <div
                   ref={popref}
-                  className="absolute top-10 right-2 bg-gray-800 rounded-lg  text-white text-xs"
+                  className="absolute top-10 right-2 bg-gray-800 rounded-md  text-white text-xs w-28"
                 >
-                  <div className="flex flex-col items-start justify-start gap-2  text-lg w-40">
-                    <button className="border-b border-gray-600 py-2 w-full">Edit post</button>
-                    <button className="border-b border-gray-600 py-2 w-full">Delete post</button>
-                    <button className="border-b border-gray-600 py-2  w-full">Hide like count</button>
+                  <div className="flex flex-col items-start justify-start gap-2  text-lg ">
+                    { currentUser?._id === threadData?.postedBy ?
+                      <>
+                        <button className="border-b border-gray-600 py-1 w-full text-sm">
+                          Edit post
+                        </button>
+                        <button className=" border-gray-600 pb-1 w-full text-sm">
+                          Delete post
+                        </button>
+                      </>
+                      :
+                      <div>
+                        <button className="border-b border-gray-600 py-1 w-full text-sm">
+                          Report post
+                        </button>
+                        <button className=" border-gray-600 pb-1 w-full text-sm">
+                          Share Post
+                        </button>
+                      </div>
+                    }
+                    {/* <button className="border-b border-gray-600 py-2  w-full">Hide like count</button> */}
                   </div>
                 </div>
               )}
             </div>
           </div>
           <Link to={`/post/${threadData?._id}`}>
-          <span className="text-sm font-thin">{threadData?.postText}</span> 
-          { threadData?.photo && <div className="rounded-lg pt-2">
-            <img
-              src="https://picsum.photos/200/300"
-              alt="post"
-              className="w-full h-72 object-cover rounded-2xl"
-              loading="lazy"
-            />
-          </div>}
+            <span className="text-sm font-thin">{threadData?.postText}</span>
+            {threadData?.photo && (
+              <div className="rounded-lg pt-2">
+                <img
+                  src="https://picsum.photos/200/300"
+                  alt="post"
+                  className="w-full h-72 object-cover rounded-2xl"
+                  loading="lazy"
+                />
+              </div>
+            )}
           </Link>
           <div>
             <Actions />
@@ -122,7 +143,7 @@ const Thread = ({ threadData }) => {
           <span>{threadData?.replies?.length} replies</span>
         </div>
       </div>
-      <hr className=" my-6  ml-16 " />
+      <hr className=" my-6 bg-gray-600 h-[1px] rounded-3xl border-none " />
     </div>
   );
 };
