@@ -47,6 +47,7 @@ const LoginPage = () => {
     onSuccess: (data) => {
       // Invalidate and refetch
       console.log(data);
+      localStorage.setItem("current-user", JSON.stringify(data));
       setCurrentUser(data)
       queryClient.invalidateQueries("data");
       redirect("/");

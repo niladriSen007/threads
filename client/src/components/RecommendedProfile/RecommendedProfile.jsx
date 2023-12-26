@@ -1,4 +1,25 @@
-const RecommendedProfile = ({name,username,profilePic,followers}) => {
+import { SlUserFollowing } from "react-icons/sl";
+import { useThreadContext } from "../../store/ThreadContext";
+import axios from "axios";
+
+const RecommendedProfile = ({name,username,profilePic,followers,userId}) => {
+
+  const { currentUser,setCurrentUser } = useThreadContext();
+
+
+  const followUnfollowUsers = async () => {
+    // console.log(id)
+    // const userTd = id.toString()
+    try {
+      const {data} = await axios.put(`/api/users/followOrUnfollow/${userId}`);
+      console.log(data)
+      setCurrentUser(data)
+      // fetchFollowers();
+    } catch (error) {
+      console.error("Failed to follow user", error);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between border-b border-gray-600 pb-4 my-6">
       <div className="flex items-start gap-3">
@@ -17,11 +38,26 @@ const RecommendedProfile = ({name,username,profilePic,followers}) => {
           <span className="font-base">{followers?.length} { followers?.length > 1 ? 'followers' : 'follower'}</span>
         </div>
       </div>
-      <div>
-        <button className="bg-blue-700 border border-gray-600 text-white px-6 py-1 rounded-lg w-full">
-          Follow
-        </button>
-      </div>
+
+
+      <div className="flex items-center gap-5">
+              {currentUser?.following?.includes(userId) ? (
+                <button
+                  className="  text-white border border-gray-600 w-full py-1 px-2 bg-transparent rounded-lg flex items-center gap-2"
+                  onClick={followUnfollowUsers}
+                >
+                  <SlUserFollowing />
+                  Following{" "}
+                </button>
+              ) : (
+                <button
+                  className="  text-white  w-full py-1 px-2 bg-blue-700 rounded-lg"
+                  onClick={followUnfollowUsers}
+                >
+                  Follow
+                </button>
+              )}
+            </div>
     </div>
   );
 };
