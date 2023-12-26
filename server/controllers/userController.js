@@ -1,6 +1,7 @@
 import { handleError } from "../handlers/errorHander.js";
 import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import {v2 as cloudinary} from "cloudinary";
 
 export const getUserByName = async (req, res) => {
   try {
@@ -59,14 +60,39 @@ export const updateProfile = async (req, res) => {
     const userId = req.user._id;
     // const { name, username, email, password,bio } = req.body;
 
+    console.log(req.body?.profileimg)
+
     const user = await User.findById(userId);
+
+    if(req.body?.profileimg){
+
+      //if user gives new profile image then delete previous one otherwise it will be stored in cloudinary and will be wasted
+      if(user?.profileimg){
+        const publicId = user?.profileimg?.split("/")[7].split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+
+      const fileStr = req.body?.profileimg;
+      const uploadResponse = await cloudinary.uploader.upload(fileStr);
+      const newData = {
+        name: req.body?.name || user?.name,
+        username: req.body?.username || user?.username,
+        email: req.body?.email || user?.email,
+        bio: req.body?.bio || user?.bio,
+        profileimg: uploadResponse?.secure_url || user?.profileimg,
+      };
+      const updatedUser = await User.findByIdAndUpdate(userId, newData, {
+        new: true,
+      });
+      const { password: _, confirmpassword: __, ...other } = updatedUser?._doc;
+      return res.status(200).json(other);
+    }
 
     let newData = {
       name: req.body?.name || user?.name,
       username: req.body?.username || user?.username,
       email: req.body?.email || user?.email,
       bio: req.body?.bio || user?.bio,
-      password: req.body?.password || user?.password,
     };
 
     if (!user) {
@@ -83,7 +109,9 @@ export const updateProfile = async (req, res) => {
       new: true,
     });
 
-    res.status(200).json(updatedUser);
+    const { password: _, confirmpassword: __, ...other } = updatedUser?._doc;
+
+    res.status(200).json(other);
   } catch (error) {
     handleError(error.message, 500);
   }

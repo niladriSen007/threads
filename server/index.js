@@ -10,33 +10,38 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
-import cors from 'cors';
+import cors from "cors";
+import { v2 as cloudinary } from "cloudinary";
 
 const app = express();
 dotenv.config();
 
 connectDB();
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 //middlewares
 // This line of code is using the express.json() middleware. This middleware is used to parse incoming requests with JSON payloads. In other words, it allows the server to read JSON from the request body. This is particularly useful when you're receiving POST or PUT request data via JSON.
 
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 
 // This line of code is using the express.urlencoded() middleware. This middleware is used to parse incoming requests with URL-encoded payloads. The "extended: true" option allows for rich objects and arrays to be encoded into the URL-encoded format, allowing for a JSON-like experience with URL-encoded.
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // This line of code is using the cookie-parser middleware. This middleware is used to parse Cookie header and populate req.cookies with an object keyed by the cookie names. This allows you to work with cookies sent back from the client.
 
 app.use(cookieParser());
-app.use(cors())
-
+app.use(cors());
 
 //routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
-
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

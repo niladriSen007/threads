@@ -17,6 +17,7 @@ const Navbar = () => {
   const logout = async () => {
     try {
       const res = await axios.post("/api/auth/logout");
+      localStorage.removeItem("current-user");
       setCurrentUser(null);
       setShowMenu(false);
       redirect("/signin");

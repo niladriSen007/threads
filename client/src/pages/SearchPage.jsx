@@ -2,7 +2,11 @@ import { FaSearch } from "react-icons/fa";
 import RecommendedProfile from "../components/RecommendedProfile/RecommendedProfile";
 import axios from "axios";
 import { useQuery } from "react-query";
+import { useEffect } from "react";
+import { useThreadContext } from "../store/ThreadContext";
 const SearchPage = () => {
+
+  // const {currentUser} = useThreadContext();
   const allUsers = async () => {
     try {
       const { data } = await axios.get("/api/users/getAllUsers");
@@ -13,9 +17,10 @@ const SearchPage = () => {
     }
   };
 
-  const { status, data } = useQuery("allUsers", allUsers);
-  console.log(status);
-  console.log(data);
+  const {  data } = useQuery("allUsers", allUsers);
+  // console.log(status);
+  // console.log(data);
+
 
   return (
     <section className="max-w-xl  mx-auto ">
@@ -28,8 +33,11 @@ const SearchPage = () => {
         />
       </div>
 
+
+      <p className="mt-12 mb-2 text-lg font-bold" >You can follow</p>
+
       {/* famous Profiles */}
-      <div className="my-10">
+      <div className="mb-10">
         {data?.map((user) => (
           <div key={user._id}>
             <RecommendedProfile
@@ -37,6 +45,7 @@ const SearchPage = () => {
               username={user.username}
               profilePic={user.profileimg}
               followers={user.followers}
+              userId={user._id}
             />
           </div>
         ))}
