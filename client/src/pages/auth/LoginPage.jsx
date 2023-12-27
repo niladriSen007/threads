@@ -15,7 +15,7 @@ const LoginPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [fetchStatus, setFetchStatus] = useState();
 
-  const {setCurrentUser} = useThreadContext()
+  const {setCurrentUser,setLiked} = useThreadContext()
 
   const validate = (values) => {
     const errors = {};
@@ -49,6 +49,7 @@ const LoginPage = () => {
       console.log(data);
       localStorage.setItem("current-user", JSON.stringify(data));
       setCurrentUser(data)
+      // setLiked(data?.liked)
       queryClient.invalidateQueries("data");
       redirect("/");
     },

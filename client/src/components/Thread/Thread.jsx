@@ -7,6 +7,7 @@ import { useThreadContext } from "../../store/ThreadContext";
 import { useQuery } from "react-query";
 import axios from "axios";
 import Loading from "../Loading/Loading";
+
 /**
  * Represents a Thread component.
  *
@@ -20,11 +21,11 @@ const Thread = ({ threadData }) => {
   const [loading, setLoading] = useState(true);
 
   // const {threadId,content,imageUrl,likes,replies} = threadData;
-  const { currentUser } = useThreadContext();
+  const { currentUser,setUpdating,setLiked,liked } = useThreadContext();
 
   const popref = useRef(null);
 
-  console.log(threadData);
+  // console.log(threadData);
 
   useEffect(() => {
     const fetchPostedBy = async () => {
@@ -32,10 +33,13 @@ const Thread = ({ threadData }) => {
         const res = await axios.get(
           `/api/users/getProfile/${threadData?.postedBy}`
         );
-        console.log(res.data);
+        // console.log(res.data);
         const profileimg = res?.data?.profileimg;
         const username = res?.data?.username;
         setLoading(false);
+          if(threadData?.likes?.includes(currentUser?._id)){
+            setLiked([...liked, threadData?._id])
+          } 
         setPostedBy((prev) => {
           return { ...prev, username, profileimg };
         });
@@ -47,10 +51,25 @@ const Thread = ({ threadData }) => {
     fetchPostedBy();
   }, []);
 
-  // const { data: postedBy } = useQuery("postedBy", fetchPostedBy);
-  // console.log(postedBy)
+
+
+
+  const handleDeletePost = async () => {
+    console.log("In delete post")
+    setUpdating(true)
+    try {
+      const res = await axios.delete(`/api/posts/deletePost/${threadData?._id}`);
+      setUpdating(false)
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //generater a code by using which i can implement the functionality that when i click any other place the popup will be closed
+
+
+
   useEffect(() => {
     const handleClickOutsideClick = (event) => {
       if (popref.current && !popref.current.contains(event.target)) {
@@ -117,7 +136,7 @@ const Thread = ({ threadData }) => {
                             <button className="border-b border-gray-600 py-1 w-full text-sm">
                               Edit post
                             </button>
-                            <button className=" border-gray-600 pb-1 w-full text-sm">
+                            <button className=" border-gray-600 pb-1 w-full text-sm" onClick={handleDeletePost}>
                               Delete post
                             </button>
                           </>
@@ -153,7 +172,7 @@ const Thread = ({ threadData }) => {
                 )}
               </Link>
               <div>
-                <Actions />
+                <Actions postId={threadData?._id} postLikes={threadData?.likes} />
               </div>
             </div>
           </div>
