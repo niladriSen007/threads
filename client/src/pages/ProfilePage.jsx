@@ -8,6 +8,7 @@ import Followers from "../components/Followers/Followers";
 import Following from "../components/Following/Following";
 import EditProfile from "../components/EditProfile/EditProfile";
 import { motion } from "framer-motion";
+import Loading from "../components/shared/Loading";
 
 const ProfilePage = () => {
   const [selectedTab, setSelectedTab] = useState(1);
@@ -24,14 +25,7 @@ const ProfilePage = () => {
       <section className=" ">
 
       {
-          updating && <div className="absolute w-screen h-screen -top-16 left-0 z-50 bg-transparent backdrop-blur-lg ">
-            <div className="   h-screen">
-              <h1 className="text-3xl font-black text-center mt-96 mr-96 flex items-center justify-center gap-2 overflow-hidden">
-                <img src="/biking.gif" alt="loading" className="w-20 h-20"/>
-                <span className="font-medium text-2xl">Your profile is upating...</span>
-                </h1>
-            </div>
-          </div>
+          updating && <Loading content={"Your profile is upating..."} />
         }
 
         {/* // Profile Info */}
@@ -69,7 +63,7 @@ const ProfilePage = () => {
               animate={{scale:1}}
               transition={{duration:.7, type:"keyframes", stiffness:200}}
               exit={{scale:0}}
-            className="absolute flex items-center justify-center -top-16 -left-72 w-screen h-screen bg-transparent backdrop-blur-sm z-50">
+            className="absolute flex items-center justify-center top-4 left-0 w-screen h-screen bg-transparent backdrop-blur-sm z-50">
                 <EditProfile {...{setShowEditProfile}}/>
             </motion.div>
           </>

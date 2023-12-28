@@ -5,12 +5,12 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/navbar/Navbar";
 import SearchPage from "./pages/SearchPage";
-import ActivityPage from "./pages/ActivityPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatePost from "./pages/CreatePost";
 import SingleThread from "./pages/SingleThread";
 import SignupPage from "./pages/auth/SingnupPage";
 import LoginPage from "./pages/auth/LoginPage";
+import MessagesPage from "./pages/MessagesPage";
 
 function App() {
   const LoginUserLayout = () => {
@@ -52,8 +52,8 @@ function App() {
           element: <CreatePost />,
         },
         {
-          path: "/activity",
-          element: <ActivityPage />,
+          path: "/messages",
+          element: <MessagesPage />,
         },
         {
           path: "/profile",

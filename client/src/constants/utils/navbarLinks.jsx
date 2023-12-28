@@ -2,7 +2,7 @@
 import { HiMiniHome } from "react-icons/hi2";
 import { FaSearch } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa";
+import { AiFillMessage } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
 export const navbarlinks = [
     {
@@ -22,8 +22,8 @@ export const navbarlinks = [
     },
     {
         id:4,
-        element: <FaHeart size={28} />,
-        link: "/activity",
+        element: <AiFillMessage size={28} />,
+        link: "/messages",
     },
     {
         id:5,
