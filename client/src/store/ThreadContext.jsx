@@ -9,6 +9,7 @@ export const ThreadProvider = ({ children }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [liked, setLiked] = useState([0]);
+  const [showComment, setShowComment] = useState(false);
   return (
     <threadContext.Provider
       value={{
@@ -20,6 +21,8 @@ export const ThreadProvider = ({ children }) => {
         setUpdating,
         liked,
         setLiked,
+        showComment,
+        setShowComment,
       }}
     >
       {children}

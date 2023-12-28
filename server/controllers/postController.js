@@ -144,7 +144,9 @@ export const addComment = async (req, res) => {
     await Post.findByIdAndUpdate(req.params.id, {
       $push: { replies: comment },
     });
-    res.status(200).json({ message: "Comment added successfully" });
+
+    const replies = post.replies.sort((a, b) => b.createdAt - a.createdAt);
+    res.status(200).json(replies);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

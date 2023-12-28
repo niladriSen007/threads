@@ -1,86 +1,109 @@
-import { BsThreeDots } from "react-icons/bs"
-import Actions from "../shared/Actions"
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { useQuery } from "react-query";
+import { useThreadContext } from "../../store/ThreadContext";
+import Loading from "../shared/Loading";
 
-const Comments = () => {
+const Comments = ({ postId,commentCount,setCommentCount }) => {
+  const [comments, setComments] = useState([]);
 
-    const [showPopup, setShowPopup] = useState(false);
+  const { currentUser,updating,setUpdating } = useThreadContext();
 
+  const getPostComments = async () => {
+    try {
+      const res = await axios.get(`/api/posts/getPost/${postId}`);
+      console.log(res.data);
+      setUpdating(false)
+      setCommentCount(res.data?.replies?.length);
+      setComments(res.data?.replies);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const popref = useRef(null);
+  const { data } = useQuery("comments", getPostComments);
 
-    //generater a code by using which i can implement the functionality that when i click any other place the popup will be closed
-    useEffect(() => {
-      const handleClickOutsideClick = (event) => {
-        if (popref.current && !popref.current.contains(event.target)) {
-          setShowPopup(false);
-        }
-      };
-  
-      const handleClickOutside = () => {
-        document.addEventListener("mousedown", handleClickOutsideClick);
-      };
-  
-      const cleanup = () => {
-        document.removeEventListener("mousedown", handleClickOutsideClick);
-      };
-  
-      if (showPopup) {
-        handleClickOutside();
-      } else {
-        cleanup();
-      }
-  
-      return cleanup;
-    }, [showPopup]);
+  const [formData, setFormData] = useState({
+    comment: "",
+  });
+
+  const handleSubmit = async (e) => {
+    setUpdating(true)
+    e.preventDefault();
+    try {
+      const res = await axios.post(`/api/posts/reply/${postId}`, {
+        replyText: formData?.comment,
+      });
+      console.log(res.data);
+      setFormData({
+        comment: "",
+      });
+      // setComments(res?.data)
+      getPostComments();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className=" my-3 border-t border-gray-600 py-4 relative">
-         <div className="flex items-start gap-3  ">
-        <div>
-          <img
-            src="https://randomuser.me/api/portraits/men/9.jpg"
-            alt="profile"
-            className="rounded-full w-6 h-6"
-            loading="lazy"
+    <div>
+      {updating ? <p>Uploading your comment...</p> :
+      <div className="flex items-center gap-4 w-full my-4">
+        <img
+          src={currentUser?.profileimg}
+          alt=""
+          className="w-6 h-6 rounded-full "
+        />
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center gap-4 w-full"
+        >
+          <input
+            type="text"
+            placeholder="Add a comment"
+            className="flex-1 bg-transparent text-white focus:outline-none border-gray-600 border-b"
+            value={formData?.comment}
+            onChange={(e) =>
+              setFormData({ ...formData, comment: e.target.value })
+            }
           />
-        </div>
-        <div className=" flex-1 flex items-center justify-between ">
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-sm">niladri_076</span>
-            <span className="text-sm font-mono">qdvhgqdvd ud qdgquydguqgd</span>
-          </div>
-          <div className="flex items-end gap-2 ">
-            <span className="text-xs text-gray-600">6m</span>
-            <BsThreeDots
-              onClick={() => setShowPopup(!showPopup)}
-              className="cursor-pointer relative z-50"
-            />
-
-            {showPopup && (
-              <div
-                ref={popref}
-                className="absolute top-12 right-2  bg-gray-800 rounded-lg text-white text-xs"
-              >
-                <div className="flex flex-col items-start justify-start gap-2  text-sm w-40 ">
-                  
-                  <button className="border-b border-gray-600 py-2 w-full">
-                    Delete Comment
-                  </button>
-                  <button className=" py-2 pt-1  w-full">
-                    Hide Comment
-                  </button>
+          <button
+            type="submit"
+            className="text-xs bg-blue-700 px-2 py-1 rounded-md"
+          >
+            Comment
+          </button>
+        </form>
+      </div> }
+      <div className="mt-6">
+              <span>Comments</span>
+      </div>
+     <div className="py-4">
+     {comments?.length > 0 ? (
+        comments.map((comment, id) => {
+          return (
+            <div className="mb-6" key={id}>
+              <div className="flex items-center gap-4">
+                <img
+                  src={comment?.userImg}
+                  alt=""
+                  className="w-8 h-8 rounded-full "
+                />
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-thin text-gray-400">
+                    {comment?.userName}
+                  </span>
+                  <p className="text-sm font-thin">{comment?.replyText}</p>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-       <div className="pl-8 py-1">
-       <Actions />
-       </div>
-       <span className="pl-10 text-sm">12 likes</span>
+            </div>
+          );
+        })
+      ) : (
+        <p>No comments</p>
+      )}
+     </div>
     </div>
-  )
-}
-export default Comments
+  );
+};
+export default Comments;

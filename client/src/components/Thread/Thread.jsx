@@ -7,6 +7,7 @@ import { useThreadContext } from "../../store/ThreadContext";
 import { useQuery } from "react-query";
 import axios from "axios";
 import Loading from "../Loading/Loading";
+import { toast } from "react-toastify";
 
 /**
  * Represents a Thread component.
@@ -52,6 +53,33 @@ const Thread = ({ threadData }) => {
   }, []);
 
 
+  console.log(threadData?.createdAt)
+
+
+  const givenDate = new Date(threadData?.createdAt);
+const currentDate = new Date();
+
+const diffInMilliseconds = givenDate.getTime() - currentDate.getTime();
+
+// Convert to seconds
+const diffInSeconds = Math.abs(Math.round(diffInMilliseconds / 1000));
+
+// Convert to minutes
+const diffInMinutes = Math.abs(Math.round(diffInSeconds / 60));
+
+// Convert to hours
+const diffInHours =Math.abs( Math.round(diffInMinutes / 60));
+
+// Convert to days
+const diffInDays = Math.abs(Math.round(diffInHours / 24));
+
+// console.log(`Difference in milliseconds: ${diffInMilliseconds}`);
+// console.log(`Difference in seconds: ${diffInSeconds}`);
+// console.log(`Difference in minutes: ${diffInMinutes}`);
+// console.log(`Difference in hours: ${diffInHours}`);
+// console.log(`Difference in days: ${diffInDays}`);
+
+
 
 
   const handleDeletePost = async () => {
@@ -61,6 +89,7 @@ const Thread = ({ threadData }) => {
       const res = await axios.delete(`/api/posts/deletePost/${threadData?._id}`);
       setUpdating(false)
       console.log(res.data);
+      toast.success("Post deleted successfully");
     } catch (error) {
       console.log(error);
     }
@@ -119,7 +148,7 @@ const Thread = ({ threadData }) => {
                   {/* <span className="text-sm font-thin">{content}</span> */}
                 </div>
                 <div className="flex items-end gap-2 ">
-                  <span>6m</span>
+                  <span>{diffInMinutes > 60 ? (diffInHours > 24 ? `${diffInDays} d` : `${diffInHours} hr`) : `${diffInMinutes}m`}</span>
                   <BsThreeDots
                     onClick={() => setShowPopup(!showPopup)}
                     className="cursor-pointer relative z-50"
@@ -156,7 +185,7 @@ const Thread = ({ threadData }) => {
                   )}
                 </div>
               </div>
-              <Link to={`/post/${threadData?._id}`}>
+              {/* <Link to={`/post/${threadData?._id}` }> */}
                 <span className="text-sm font-thin">
                   {threadData?.postText}
                 </span>
@@ -165,14 +194,14 @@ const Thread = ({ threadData }) => {
                     <img
                       src={threadData?.photo}
                       alt="post"
-                      className="w-full h-96 object-fill rounded-2xl"
+                      className="w-full h-96 object-contain rounded-2xl"
                       loading="lazy"
                     />
                   </div>
                 )}
-              </Link>
+              {/* </Link> */}
               <div>
-                <Actions postId={threadData?._id} postLikes={threadData?.likes} />
+                <Actions postId={threadData?._id} postLikes={threadData?.likes} postedBy={postedBy}/>
               </div>
             </div>
           </div>

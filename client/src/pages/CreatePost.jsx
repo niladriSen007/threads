@@ -7,6 +7,8 @@ import axios from 'axios';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom'
 
+import { toast } from 'react-toastify';
+
 
 const CreatePost = () => {
 
@@ -38,6 +40,7 @@ const CreatePost = () => {
       setUpdating(false)
 
       console.log(data);
+      toast.success("Post created successfully");
       redirect("/");
     },
   });
