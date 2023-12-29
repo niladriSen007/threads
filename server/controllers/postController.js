@@ -146,9 +146,9 @@ export const addComment = async (req, res) => {
     });
 
     const replies = post.replies.sort((a, b) => b.createdAt - a.createdAt);
-    res.status(200).json(replies);
+    return res.status(200).json(replies);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -165,7 +165,7 @@ export const getOwnAllPosts = async (req, res) => {
         .json({ error: "You have not yet posted anything" });
     }
 
-    res.status(200).json(posts);
+    return res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

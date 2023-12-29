@@ -3,133 +3,92 @@ import { Message } from "../models/messageModel.js";
 
 export const getMessages = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const conversation = await Conversation.find({
-      participants: { $in: [userId] },
+    const { otherUserId } = req.params;
+    const userId = req.user?._id;
+    const conversation = await Conversation.findOne({
+      participants: { $all: [userId, otherUserId] },
     });
+
+    if (!conversation) return res.status(200).json([]);
+
     const messages = await Message.find({
-      conversationId: conversation[0]._id,
+      conversationId: conversation._id,
+    }).sort({ createdAt: 1 });
+    return res.status(200).json(messages);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const sendMessage = async (req, res) => {
+  try {
+    const { receiverId, text } = req.body;
+    const senderId = req.user?._id;
+
+    console.log(senderId, receiverId, text);
+
+    //To check does user have any previous conversation history with the receiver or not
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
     });
-    res.status(200).json(messages);
+
+    // console.log(conversation,"conv")
+
+    // let newConversation;
+    if (!conversation) {
+      // console.log("In no conv")
+      conversation = new Conversation({
+        participants: [senderId, receiverId],
+        lastMessage: {
+          sender: senderId,
+          text: text,
+        },
+      });
+      await conversation.save();
+    }
+    // console.log(newConversation,conversation)
+
+    const newMessage = new Message({
+      conversationId: conversation?._id,
+      sender: senderId,
+      receiver: receiverId,
+      text: text,
+    });
+
+    await Promise.all([
+      newMessage.save(),
+      conversation.updateOne({
+        lastMessage: {
+          text: text,
+          sender: senderId,
+        },
+      }),
+    ]);
+
+    return res.status(200).json(newMessage);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const getConversations = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const conversations = await Conversation.find({
+      participants: userId,
+    }).populate({
+      path: "participants",
+      select: "username profileimg",
+    });
+
+    conversations?.forEach((conversation) => {
+      conversation.participants = conversation?.participants?.filter(
+        (participant) => participant?._id?.toString() !== userId.toString()
+      );
+    });
+
+    return res.status(200).json(conversations);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
-
-export const sendMessage = async (req, res) => {
-    try {
-
-        const { receiverId, text } = req.body;
-        const sen = req.user._id;
-        const newMessage = new Message(req.body);
-        const savedMessage = await newMessage.save();
-        res.status(200).json(savedMessage);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const getConversations = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const conversations = await Conversation.find({
-            participants: { $in: [userId] },
-        });
-        res.status(200).json(conversations);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const newConversation = async (req, res) => {
-    try {
-        const newConversation = new Conversation({
-            participants: [req.body.senderId, req.body.receiverId],
-            lastMessage: {
-                sender: req.body.senderId,
-                text: req.body.text,
-            },
-        });
-        const savedConversation = await newConversation.save();
-        res.status(200).json(savedConversation);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const updateLastMessage = async (req, res) => {
-    try {
-        const conversation = await Conversation.findById(req.params.id);
-        await conversation.updateOne({
-            $set: { lastMessage: req.body },
-        });
-        res.status(200).json("Conversation updated");
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const deleteConversation = async (req, res) => {
-    try {
-        const conversation = await Conversation.findById(req.params.id);
-        await Message.deleteMany({
-            conversationId: conversation._id,
-        });
-        await conversation.deleteOne();
-        res.status(200).json("Conversation deleted");
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const deleteMessage = async (req, res) => {
-    try {
-        await Message.deleteOne({ _id: req.params.id });
-        res.status(200).json("Message deleted");
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const updateMessage = async (req, res) => {
-    try {
-        await Message.updateOne({ _id: req.params.id }, { $set: req.body });
-        res.status(200).json("Message updated");
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const getConversation = async (req, res) => {
-    try {
-        const conversation = await Conversation.findById(req.params.id);
-        res.status(200).json(conversation);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const getMessagesFromConversation = async (req, res) => {
-    try {
-        const messages = await Message.find({
-            conversationId: req.params.id,
-        });
-        res.status(200).json(messages);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-export const getConversationByTwoUsers = async (req, res) => {
-    try {
-        const conversation = await Conversation.find({
-            participants: { $all: [req.params.firstUserId, req.params.secondUserId] },
-        });
-        res.status(200).json(conversation);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-    }
-
-
