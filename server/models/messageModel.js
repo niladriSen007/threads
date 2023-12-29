@@ -1,3 +1,5 @@
+import mongoose, { Schema } from "mongoose";
+
 export const MessageSchema = new Schema(
   {
     text: String,

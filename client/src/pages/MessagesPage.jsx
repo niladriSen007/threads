@@ -1,12 +1,42 @@
 import { FaSearch } from "react-icons/fa";
 import ChatUserProfile from "../components/messages/chatUserProfile";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatBox from "../components/messages/ChatBox";
 import { IoLogoSnapchat } from "react-icons/io";
+import axios from "axios";
+import { useQuery } from "react-query";
+import { useThreadContext } from "../store/ThreadContext";
 const MessagesPage = () => {
-  const [availableUsers, setAvailableUsers] = useState([1]);
+
+  const {getconversationsLoading}= useThreadContext();
+
+  const [availableUsers, setAvailableUsers] = useState();
 
   const [selecteduserProfile, setSelectedUserProfile] = useState(-1);
+  const [otherUser, setOtherUser] = useState({
+    idx:"",
+    name:"",
+    img:""
+  });
+
+
+  const fetchAvailableUsers = async () => {
+    try {
+      const {data} = await axios.get("/api/messages/getconversations");
+      setAvailableUsers(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchAvailableUsers();
+  }, [getconversationsLoading]);
+
+
+  // const {data} = useQuery("availableUsers",fetchAvailableUsers);
+
+
 
   return (
     <div className=" rounded-md max-w-4xl mx-auto my-12 flex items-start gap-12 ">
@@ -24,17 +54,21 @@ const MessagesPage = () => {
         </div>
         <div className="my-2">
           {availableUsers?.length > 0 ? (
-            availableUsers?.map((user, index) => (
+            availableUsers?.map((user) => (
               <div
-                key={index}
+                key={user?._id}
                 className={`${
-                  selecteduserProfile === index ? "bg-slate-800" : ""
+                  selecteduserProfile === user?.participants?.at(0)?._id ? "bg-slate-800" : ""
                 } rounded-md`}
               >
                 <ChatUserProfile
-                  username={"Niladri"}
-                  idx={index}
+                  username={user?.participants?.at(0)?.username}
+                  idx={user?.participants?.at(0)?._id}
                   setSelectedUserProfile={setSelectedUserProfile}
+                  userImg={user?.participants?.at(0)?.profileimg}
+                  lastMessage={user?.lastMessage?.text}
+                  setOtherUser={setOtherUser}
+                  sender={user?.lastMessage?.sender}
                 />
               </div>
             ))
@@ -51,7 +85,7 @@ const MessagesPage = () => {
           </div>
 
         ) : (
-          <ChatBox />
+          <ChatBox receivingUser ={otherUser}  />
         )}
       </div>
     </div>
